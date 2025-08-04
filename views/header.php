@@ -1,0 +1,14 @@
+<header>
+    <nav>
+
+        <div>
+            <img src="assets/images/logo_big.png">
+            <b>Find My dream Home</b>
+        </div>
+        <ul>
+            <li><a href="https://m.media-amazon.com/images/I/813kqvYoRfL.png">House</a></li>
+            <li><a href="https://m.media-amazon.com/images/I/813kqvYoRfL.png">Appartement</a></li>
+            <li class="login"><a href="https://m.media-amazon.com/images/I/813kqvYoRfL.png"></a>Login</a></li>
+        </ul>
+    </nav>
+</header>

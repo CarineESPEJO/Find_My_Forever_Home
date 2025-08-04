@@ -1,0 +1,144 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #ececec;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header,
+footer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0.5rem;
+  background-color: white;
+  box-shadow: 0 0 0.3rem gray;
+}
+
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 62rem; 
+  position: sticky;
+}
+
+nav ul {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+nav li {
+  padding: 0.5rem 0;
+}
+
+nav a {
+  text-decoration: none;
+  color: #000;
+}
+
+nav div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+nav img {
+  width: 3rem;
+  height: 2rem;
+}
+
+.login,
+.contact {
+  background-color: #31a2ff;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  text-decoration: none;
+}
+
+.login{
+   padding: 0.5rem; 
+}
+
+.contact {
+  display: flex;
+  justify-content: center;
+  width: 25%;
+  padding: 0.5rem 2rem;
+}
+
+main {
+  max-width: 62rem;
+  margin-bottom: 1.5rem;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 0;
+  width: 100%;
+}
+
+section > div {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  min-width: 0;
+}
+
+article {
+  background-color: white;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+article > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+article > img {
+  width: 100%;
+  height: 12rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+article > h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+}
+
+.description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
