@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <?php require_once("views/header.php"); ?>
+    <?php require_once("views/common_views/header.php"); ?>
 
     <main>
 
@@ -23,7 +23,7 @@
                 <?php
                 require_once 'database/annonces_databases.php';
                 foreach ($maisons as $annonce) {
-                    include "views/vignette_view.php";
+                    include "views/common_views/vignette_view.php";
                 }
                 ?>
             </div>
@@ -36,7 +36,7 @@
             <hr>
             <div>
             <?php foreach ($appartements as $annonce) {
-                include("views/vignette_view.php");
+                include("views/common_views/vignette_view.php");
             }
             ?>
             </div>
@@ -45,7 +45,7 @@
 
     </main>
 
-    <?php require_once("views/footer.php"); ?>
+    <?php require_once("views/common_views/footer.php"); ?>
 </body>
 
 </html>

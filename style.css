@@ -27,13 +27,17 @@ footer {
   bottom: 0;
 }
 
+
+header {
+position: sticky;
+}
+
 nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 62rem; 
-  position: sticky;
+  max-width: 62rem;  
 }
 
 nav ul {
