@@ -11,10 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_regenerate_id(true);
         $_SESSION["user"] = "admin";
         $_SESSION["isLoggedIn"] = true;
-        header("Location: comments.php");
+        header("Location: ../comments.php");
         exit();
     } else {
-        $errors = "Identifiants incorrects";
+        $error = "Identifiants incorrects";
     }
 }
 ?>
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <form action="" method="post">
                     <label for="email">email:</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required value="<?= htmlspecialchars($email ?? '') ?>">
 
                     <label for="password">mot de passe:</label>
                     <input type="password" id="password" name="password" required>
