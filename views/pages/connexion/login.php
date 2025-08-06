@@ -4,7 +4,8 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST["email"]);
     $password = trim($_POST["password"]);
-    
+    $error = "";
+
 
     if ($email === "admin@email.com" && $password === "azerty") {
         session_regenerate_id(true);
@@ -13,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: comments.php");
         exit();
     } else {
-        echo "<p style='color:red;'>Identifiants incorrects.</p>";
+        $errors = "Identifiants incorrects";
     }
 }
 ?>
@@ -25,19 +26,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="/global_style.css">
-    <link rel="stylesheet" href="connexion_style.css">
+       <link rel="stylesheet" href="/assets/css_files/global_style.css">
+    <link rel="stylesheet" href="/assets/css_files/connexion_style.css">
 </head>
 
 <body>
-  <?php require_once("../views/common_views/header.php"); ?>
-  
-  <div class="body-wrapper">
-    <aside>
-      <img src="/assets/images/login_img.jpeg" alt="Login visual" />
-    </aside>
+    <?php require_once("../../common_components/header.php"); ?>
 
-    <main>
+    <div class="body-wrapper">
+        <aside>
+            <img src="/assets/images/login_img.jpeg" alt="Login visual" />
+        </aside>
+
+        <main>
             <h2>Connexion</h2>
             <?php if (!empty($_SESSION["isLoggedIn"]) && $_SESSION["isLoggedIn"] == true): ?>
 
@@ -45,7 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <a href="logout.php">Déconnexion</a>
             <?php else: ?>
 
-           
+                <span><?php if (!empty($error)) {
+                    echo $error;
+                } ?></span>
+
                 <form action="" method="post">
                     <label for="email">email:</label>
                     <input type="email" id="email" name="email" required>
@@ -57,10 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
                 <a href="register.php">Pas encore de compte? Inscrivez-vous</a>
             <?php endif; ?>
-            
-     </main>
-  </div>
-  <?php require_once("../views/common_views/footer.php"); ?>
+
+        </main>
+    </div>
+    <?php require_once("../../common_components/footer.php"); ?>
 </body>
 
 </html>

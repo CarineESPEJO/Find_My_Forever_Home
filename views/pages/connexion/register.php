@@ -12,19 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password_pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{9,}$/';
 
     if (empty($email)) {
-        $errors[] = "L'email est obligatoire";
-    } elseif (!preg_match($email_pattern, $email)) {
-        $errors[] = "Email non reconnu";
+        $errors["email"] = "L'email est obligatoire";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors["email"] = "Email non reconnu";
     }
 
     if (empty($password)) {
-        $errors[] = "Le mot de passe est obligatoire";
+        $errors["password"] = "Le mot de passe est obligatoire";
     } elseif (!preg_match($password_pattern, $password)) {
-        $errors[] = "Le mot de passe doit contenir au moins 9 caractères, une minuscule, une majuscule, un chiffre et un caractère spécial";
+        $errors["password"] = "Le mot de passe doit contenir au moins 9 caractères, une minuscule, une majuscule, un chiffre et un caractère spécial";
     }
 
     if ($confirm_password != $password) {
-     $errors[] = "Les mots de passes ne sont pas identiques.";
+        $errors["confirm_password"] = "Les mots de passes ne sont pas identiques.";
     }
 
 
@@ -41,21 +41,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="/global_style.css">
-    <link rel="stylesheet" href="connexion_style.css">
+    <link rel="stylesheet" href="/assets/css_files/global_style.css">
+    <link rel="stylesheet" href="/assets/css_files/connexion_style.css">
 </head>
 
 <body>
-  <?php require_once("../views/common_views/header.php"); ?>
-  
-  <div class="body-wrapper">
-    <aside>
-      <img src="/assets/images/login_img.jpeg" alt="Login visual" />
-    </aside>
+    <?php require_once("../../common_components/header.php"); ?>
 
-    <main>
-            <h2>Connexion</h2>
+    <div class="body-wrapper">
+        <aside>
+            <img src="/assets/images/login_img.jpeg" alt="Login visual" />
+        </aside>
+
+        <main>
+            <h2>Inscription</h2>
             <?php if (!empty($_SESSION["isLoggedIn"]) && $_SESSION["isLoggedIn"] == true): ?>
 
                 <p> Vous êtes déjà connectés</p>
@@ -65,32 +64,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h3 style="color: green;">Votre compte a été créé</h3>
                 <?php endif; ?>
 
-                <?php if (!empty($errors)): ?>
-                    <ul style="color: red;">
-                        <?php foreach ($errors as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-
                 <form action="" method="post">
                     <label for="email">Email :</label>
                     <input type="email" id="email" name="email" required>
+                    <span><?php if (isset($errors["email"])) {
+                        echo $errors["email"];
+                    } ?></span>
 
                     <label for="password">Mot de passe :</label>
                     <input type="password" id="password" name="password" minlength="9" required>
+                    <span><?php if (isset($errors["password"])) {
+                        echo $errors["password"];
+                    } ?></span>
+
 
                     <label for="confirm_password">Confirmer le mot de passe:</label>
                     <input type="password" id="confirm_password" name="confirm_password" minlength="9" required>
+                    <span><?php if (isset($errors["confirm_password"])) {
+                        echo $errors["confirm_password"];
+                    } ?></span>
+
 
                     <button class="login" type="submit">S'incrire</button>
                 </form>
             <?php endif; ?>
             <a href="login.php">Déjà inscrit ? Connectez-vous ?</a>
-        
-    </main>
-</div>
-    <?php require_once("../views/common_views/footer.php"); ?>
+
+        </main>
+    </div>
+    <?php require_once("../../common_components/footer.php"); ?>
 </body>
 
 </html>

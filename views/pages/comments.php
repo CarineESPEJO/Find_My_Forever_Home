@@ -3,7 +3,7 @@ session_start();
 
 $commentsFile = __DIR__ . "/comments.txt";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_SESSION["isLoggedIn"])) {
+if (isset($_SESSION["isLoggedIn"]) && $_SERVER["REQUEST_METHOD"] === "POST" ) {
     $username = $_SESSION["user"];
     $comment = trim($_POST["comment"]);
 
@@ -33,12 +33,12 @@ if (file_exists($commentsFile)) {
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find my dream home - Commentaires</title>
-    <link rel="stylesheet" href="/global_style.css">
-    <link rel="stylesheet" href="connexion_style.css">
+    <link rel="stylesheet" href="/assets/css_files/global_style.css">
+    <link rel="stylesheet" href="/assets/css_files/connexion_style.css">
 </head>
 <body>
 
-<?php require_once("../views/common_views/header.php"); ?>
+<?php require_once("../common_components/header.php"); ?>
     
 <?php if (!empty($_SESSION["isLoggedIn"]) && $_SESSION["isLoggedIn"] == true ): ?>
     <p>
@@ -71,6 +71,6 @@ if (file_exists($commentsFile)) {
         </div>
     <?php endforeach; ?>
 <?php endif; ?>
-<?php require_once("../views/common_views/footer.php"); ?>
+<?php require_once("../common_components/header.php"); ?>
 </body>
 </html>
