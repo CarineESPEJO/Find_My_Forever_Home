@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         session_regenerate_id(true);
         $_SESSION["userId"] = $user["id"];
+        $_SESSION["userRole"] = $user["role"];
         $_SESSION["isLoggedIn"] = true;
         header("Location: ../comments.php");
         exit();

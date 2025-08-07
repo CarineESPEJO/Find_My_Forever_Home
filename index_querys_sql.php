@@ -7,7 +7,7 @@ $stmt = "";
 
 if ($stmt_is_house) {
     $stmt = $pdo->prepare(
-        'SELECT image_URL, title, price, protyp.name AS property_type, tratyp.name AS transaction_type, city, description, lis.created_at AS created_at,lis.updated_at AS updated_at 
+        'SELECT lis.id AS id, image_URL, title, price, protyp.name AS property_type, tratyp.name AS transaction_type, city, description, lis.created_at AS created_at,lis.updated_at AS updated_at 
          FROM listing AS lis
          JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
          JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
@@ -17,7 +17,7 @@ if ($stmt_is_house) {
     );
 } else {
     $stmt = $pdo->prepare(
-        'SELECT image_URL, title, price, protyp.name AS property_type, tratyp.name AS transaction_type, city, description, lis.created_at AS created_at,lis.updated_at AS updated_at
+        'SELECT lis.id AS id, image_URL, title, price, protyp.name AS property_type, tratyp.name AS transaction_type, city, description, lis.created_at AS created_at,lis.updated_at AS updated_at
          FROM listing AS lis
          JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
          JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id

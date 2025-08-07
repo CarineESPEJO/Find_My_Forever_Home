@@ -8,7 +8,8 @@ form.addEventListener('submit', function (event) {
     let isValid = true;
 
     const title = form.querySelector('#title');
-    const imgURL = form.querySelector('#image_URL');
+    const imageFileInput = form.querySelector('#image_file');
+    const file = imageFileInput.files[0]
     const price = form.querySelector('#price');
     const city = form.querySelector('#city');
     const description = form.querySelector('#description');
@@ -16,7 +17,6 @@ form.addEventListener('submit', function (event) {
     const transactionType = form.querySelector('#transaction_type');
 
     const titleError = form.querySelector('#titleError');
-    const imgURLError = form.querySelector('#imgURLError');
     const priceError = form.querySelector('#priceError');
     const cityError = form.querySelector('#cityError');
     const descriptionError = form.querySelector('#descError');
@@ -54,13 +54,20 @@ form.addEventListener('submit', function (event) {
         titleError.textContent = 'Le titre doit contenir entre 5 et 50 caractères';
     }
 
-    if ((imgURL.value.length > 255)) {
-         isValid = false;
-        document.getElementById('imgURLError').textContent = 'L\'Url de l\'image doit faire 255 caractères maximum.';
-    }
-    else if (!isValidUrl(imgURL.value)) {
+    if (!file) {
         isValid = false;
-        document.getElementById('imgURLError').textContent = 'L\'Url de l\'image n\'est pas bonne.';
+        document.getElementById('imgError').textContent = "Vous devez sélectionner une image.";
+    } else {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        if (!allowedTypes.includes(file.type)) {
+            isValid = false;
+            document.getElementById('imgError').textContent = "Seuls les fichiers JPG, PNG ou WEBP sont acceptés.";
+        } else if (file.size > maxSize) {
+            isValid = false;
+            document.getElementById('imgError').textContent = "L'image ne doit pas dépasser 5 Mo.";
+        };
     };
 
     if (!isValidPrice(price.value)) {

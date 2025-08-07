@@ -24,6 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     ;
 
+    if (!isset($_POST['image_URL'])) {
+        $errors['image_URL'] = "Ajouté l'url d'une image svp";
+    } elseif (strlen($_POST['image_URL']) > 150) {
+        $errors['image_URL'] = "L'Url de l'image doit faire 255 caractères maximum.";
+    } elseif (!preg_match($imageURL_pattern, $_POST['image_URL'])) {
+        $errors['image_URL'] = "L'URL de l'image n'est pas valide. Formats acceptés : jpg, jpeg, png, webp";
+    }
+
+    ;
+
     if (!isset($_POST['price'])) {
         $errors['price'] = "Le prix est obligatoire";
     } elseif (!ctype_digit($_POST['price']) || intval($_POST['price']) <= 0) {
@@ -56,15 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['transaction_type'] = "Le type de transaction est obligatoire";
     } elseif ($_POST['transaction_type'] != "Rent" && $_POST['transaction_type'] != "Sale") {
         $errors['transaction_type'] = "Le type de transaction doit être soit Rent, soit Sale";
-    };
-
-    if (isset($_FILES['image_file']) && ($_FILES['image_file']['error'] == 0)) {
-        $fileTmp = $_FILES['image_file']['tmp_name'];
-        $fileSize = $_FILES['image_file']['size'];
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-    } else {
-        $errors["image_file"] = "Le fichier n'a pas pu être chargé.";
     }
+
     ;
 
     if (empty($errors)) {
@@ -117,70 +120,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-                <form action="" method="post" enctype="multipart/form-data"></form>
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" minlength="5" maxlength="50" required
-                    value="<?php echo htmlspecialchars($title ?? '') ?>">
-                <span id="titleError" class="error"><?php echo isset($errors["title"]) ? $errors["title"] : "" ?>
-                </span>
+                <form action="" method="post">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" minlength="5" maxlength="50" required
+                        value="<?php echo htmlspecialchars($title ?? '') ?>">
+                    <span id="titleError" class="error"><?php echo isset($errors["title"]) ? $errors["title"] : "" ?>
+                    </span>
 
-                <label for="image_file">Upload image:</label>
-                <input type="file" id="image_file" name="image_file" accept=".jpg,.jpeg,.png,.webp" required>
-                <span id="imgError" class="error"><?php echo $errors["image_file"] ?? "" ?></span>
+                    <label for="image_URL">URL image:</label>
+                    <input type="text" id="image_URL" name="image_URL" required
+                        value="<?php echo htmlspecialchars($image_URL ?? '') ?>">
+                    <span id="imgURLError"
+                        class="error"><?php echo isset($errors["image_URL"]) ? $errors["image_URL"] : "" ?> </span>
 
-                <label for="price">Price:</label>
-                <input type="number" id="price" name="price" min="1" required
-                    value="<?php echo htmlspecialchars($price ?? '') ?>">
-                <span id="priceError" class="error"><?php if (isset($errors["price"])) {
-                    echo $errors["price"];
-                } ?></span>
+                    <label for="price">Price:</label>
+                    <input type="number" id="price" name="price" min="1" required
+                        value="<?php echo htmlspecialchars($price ?? '') ?>">
+                    <span id="priceError" class="error"><?php if (isset($errors["price"])) {
+                        echo $errors["price"];
+                    } ?></span>
 
-                <label for="city">Ville:</label>
-                <input type="text" id="city" name="city" required value="<?php echo htmlspecialchars($city ?? '') ?>">
-                <span id="cityError" class="error"><?php if (isset($errors["city"])) {
-                    echo $errors["city"];
-                } ?></span>
-
-
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" rows="4" cols="50" placeholder="Votre description..."
-                    minlength="50" maxlength="255"
-                    required><?php echo htmlspecialchars($description ?? '') ?></textarea><br>
-                <span id="descError" class="error"><?php if (isset($errors["description"])) {
-                    echo $errors["description"];
-                } ?></span>
+                    <label for="city">Ville:</label>
+                    <input type="text" id="city" name="city" required value="<?php echo htmlspecialchars($city ?? '') ?>">
+                    <span id="cityError" class="error"><?php if (isset($errors["city"])) {
+                        echo $errors["city"];
+                    } ?></span>
 
 
-                <label for="property_type">Type de propriété:</label>
-                <select id="property_type" name="property_type" required>
-                    <option value="" disabled selected hidden <?= empty($property_type) ? 'selected' : '' ?>>--select
-                        type--</option>
-                    <option value="House" <?= isset($property_type) && $property_type === 'House' ? 'selected' : '' ?>>
-                        House</option>
-                    <option value="Apartment" <?= isset($property_type) && $property_type === 'Apartment' ? 'selected' : '' ?>>
-                        Apartment</option>
-
-                </select>
-                <span id="proptypeError" class="error"><?php if (isset($errors["property_type"])) {
-                    echo $errors["property_type"];
-                } ?></span>
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="4" cols="50" placeholder="Votre description..."
+                        minlength="50" maxlength="255"
+                        required><?php echo htmlspecialchars($description ?? '') ?></textarea><br>
+                    <span id="descError" class="error"><?php if (isset($errors["description"])) {
+                        echo $errors["description"];
+                    } ?></span>
 
 
-                <label for="transaction_type">Type de transaction:</label>
-                <select id="transaction_type" name="transaction_type" required>
-                    <option value="" disabled selected hidden <?= empty($transaction_type) ? 'selected' : '' ?>>--select
-                        type--</option>
-                    <option value="Rent" <?= isset($transaction_type) && $transaction_type === 'Rent' ? 'selected' : '' ?>>
-                        Rent</option>
-                    <option value="Sale" <?= isset($transaction_type) && $transaction_type === 'Sale' ? 'selected' : '' ?>>
-                        Sale</option>
-                </select>
-                <span id="transtypeError" class="error"><?php if (isset($errors["transaction_type"])) {
-                    echo $errors["transaction_type"];
-                } ?></span>
+                    <label for="property_type">Type de propriété:</label>
+                    <select id="property_type" name="property_type" required>
+                        <option value="" disabled selected hidden <?= empty($property_type) ? 'selected' : '' ?>>--select
+                            type--</option>
+                        <option value="House" <?= isset($property_type) && $property_type === 'House' ? 'selected' : '' ?>>
+                            House</option>
+                        <option value="Apartment" <?= isset($property_type) && $property_type === 'Apartment' ? 'selected' : '' ?>>Apartment</option>
+
+                    </select>
+                    <span id="proptypeError" class="error"><?php if (isset($errors["property_type"])) {
+                        echo $errors["property_type"];
+                    } ?></span>
 
 
-                <button id="submitButton" class="login" type="submit">Enregistrer</button>
+                    <label for="transaction_type">Type de transaction:</label>
+                    <select id="transaction_type" name="transaction_type" required>
+                        <option value="" disabled selected hidden <?= empty($transaction_type) ? 'selected' : '' ?>>--select
+                            type--</option>
+                        <option value="Rent" <?= isset($transaction_type) && $transaction_type === 'Rent' ? 'selected' : '' ?>>
+                            Rent</option>
+                        <option value="Sale" <?= isset($transaction_type) && $transaction_type === 'Sale' ? 'selected' : '' ?>>
+                            Sale</option>
+                    </select>
+                    <span id="transtypeError" class="error"><?php if (isset($errors["transaction_type"])) {
+                        echo $errors["transaction_type"];
+                    } ?></span>
+
+
+                    <button id="submitButton" class="login" type="submit">Enregistrer</button>
                 </form>
             <?php elseif ($_SESSION["userRole"] != "admin" && $_SESSION["userRole"] != "agent"): ?>
                 <p>🔒 Vous n'avez pas les droits pour ajouter une annonce.</p>
