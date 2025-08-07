@@ -15,7 +15,7 @@ $result = $stmt -> fetch(PDO::FETCH_ASSOC);
 
     if ($result) {
         session_regenerate_id(true);
-        $_SESSION["user"] = "admin";
+        $_SESSION["userId"] = $result["id"];
         $_SESSION["isLoggedIn"] = true;
         header("Location: ../comments.php");
         exit();

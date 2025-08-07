@@ -1,6 +1,6 @@
 <?php
 try {
-    $pdo = new PDO("mysql:host=localhost;port=3306;dbname=FMDH_DB", "admin", "mdp");
+    $pdo = new PDO("mysql:host=localhost;port=3306;dbname=FMDH_DB;charset=utf8",  "admin", "mdp");
     
     // Set error mode to exception for better error handling
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

@@ -8,17 +8,17 @@ form.addEventListener('submit', function (event) {
     let isValid = true;
 
     const title = form.querySelector('#title');
-    const imageUpload = form.querySelector('#imageUpload');
+    const imgURL = form.querySelector('#image_URL');
     const price = form.querySelector('#price');
-    const location = form.querySelector('#location');
+    const city = form.querySelector('#city');
     const description = form.querySelector('#description');
     const propertyType = form.querySelector('#property_type');
     const transactionType = form.querySelector('#transaction_type');
 
     const titleError = form.querySelector('#titleError');
-    const imgUploadError = form.querySelector('#imgUploadError');
+    const imgURLError = form.querySelector('#imgURLError');
     const priceError = form.querySelector('#priceError');
-    const locationError = form.querySelector('#locationError');
+    const cityError = form.querySelector('#cityError');
     const descriptionError = form.querySelector('#descError');
     const proptypeError = form.querySelector('#proptypeError');
     const transtypeError = form.querySelector('#transtypeError');
@@ -37,9 +37,9 @@ form.addEventListener('submit', function (event) {
         }
     }
 
-    function isValidLocName(location) {
-        const regex = /^[\p{L}\p{M}\s\'\.\-ʻ’]{1,100}$/u;
-        return regex.test(location);
+    function isValidCityName(city) {
+        const regex = /^[\p{L}\p{M}\s\'\.\-ʻ’]{1,150}$/u;
+        return regex.test(city);
     };
 
     function isValidPrice(price) {
@@ -54,10 +54,13 @@ form.addEventListener('submit', function (event) {
         titleError.textContent = 'Le titre doit contenir entre 5 et 50 caractères';
     }
 
-
-    if (!isValidUrl(imageUpload.value)) {
+    if ((imgURL.value.length > 255)) {
+         isValid = false;
+        document.getElementById('imgURLError').textContent = 'L\'Url de l\'image doit faire 255 caractères maximum.';
+    }
+    else if (!isValidUrl(imgURL.value)) {
         isValid = false;
-        document.getElementById('imgUploadError').textContent = 'L\'Url de l\'image n\'est pas bonne.';
+        document.getElementById('imgURLError').textContent = 'L\'Url de l\'image n\'est pas bonne.';
     };
 
     if (!isValidPrice(price.value)) {
@@ -65,9 +68,9 @@ form.addEventListener('submit', function (event) {
         document.getElementById('priceError').textContent = 'Le prix doit est un nombre positif.';
     };
 
-    if (!isValidLocName(location.value)) {
+    if (!isValidCityName(city.value)) {
         isValid = false;
-        document.getElementById('locationError').textContent = 'Entrez un vrai nom de ville';
+        document.getElementById('cityError').textContent = 'Entrez un vrai nom de ville';
     };
 
     if (!(description.value.trim().length >= 50 && description.value.trim().length <= 255)) {
@@ -75,9 +78,9 @@ form.addEventListener('submit', function (event) {
         document.getElementById('descError').textContent = 'La description doit contenir entre 50 et 255 caractères';
     };
 
-    if ((propertyType.value !== "House" && propertyType.value !== "Appartement")) {
+    if ((propertyType.value !== "House" && propertyType.value !== "Apartment")) {
         isValid = false;
-        proptypeError.textContent = 'Le type de location doit être soit House soit Appartement';
+        proptypeError.textContent = 'Le type de city doit être soit House soit Apartment';
     }
 
 

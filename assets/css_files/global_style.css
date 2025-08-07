@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+.capitalize{
+  text-transform: capitalize;
+}
+
 body {
   background-color: #ececec;
   display: flex;

@@ -1,5 +1,7 @@
 <?php
-session_start(); ?>
+session_start();
+require_once("views/common_components/pdo_connexion.php");
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,14 +19,13 @@ session_start(); ?>
 
     <main>
         <section>
-            <h2>
-                Nos annonces de maisons
-            </h2>
+            <h2>Nos annonces de maisons</h2>
             <hr>
             <div>
                 <?php
-                require_once('database/annonces_databases.php');
-                foreach ($maisons as $annonce) {
+                $stmt_is_house = true;
+                require('index_querys_sql.php');
+                foreach ($result as $annonce) {
                     include("views/common_components/vignette_view.php");
                 }
                 ?>
@@ -32,22 +33,20 @@ session_start(); ?>
         </section>
 
         <section>
-            <h2>
-                Nos annonces d'appartements
-            </h2>
+            <h2>Nos annonces d'appartements</h2>
             <hr>
             <div>
-                <?php foreach ($appartements as $annonce) {
+                <?php
+                $stmt_is_house = false;
+                require('index_querys_sql.php');
+                foreach ($result as $annonce) {
                     include("views/common_components/vignette_view.php");
                 }
                 ?>
             </div>
         </section>
-
-
     </main>
 
     <?php require_once("views/common_components/footer.php"); ?>
 </body>
-
 </html>
