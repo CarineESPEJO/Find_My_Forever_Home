@@ -4,7 +4,7 @@ session_start();
 $commentsFile = __DIR__ . "/comments.txt";
 
 if (isset($_SESSION["isLoggedIn"]) && $_SERVER["REQUEST_METHOD"] === "POST" ) {
-    $username = $_SESSION["user"];
+    $username = $_SESSION["userId"];
     $comment = trim($_POST["comment"]);
 
     if (!empty($comment)) {
@@ -42,7 +42,7 @@ if (file_exists($commentsFile)) {
     
 <?php if (!empty($_SESSION["isLoggedIn"]) && $_SESSION["isLoggedIn"] == true ): ?>
     <p>
-        Bienvenue, <?php echo $_SESSION["user"] ?> |
+        Bienvenue, <?php echo $_SESSION["userId"] ?> |
         <a href="logout.php">Déconnexion</a>
     </p>
 
