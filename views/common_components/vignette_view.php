@@ -14,4 +14,5 @@
 
     <!-- outside of the main link to be also clickable but elsewhere -->
     <a class="contact contact-btn" href="/views/pages/contact.php?annonce_id=<?= urlencode($annonce['id']) ?>">Contact</a>
+    <a class="contact favoris" href="/views/pages/contact.php?annonce_id=<?= urlencode($annonce['id']) ?>">Favoris</a>
 </article>

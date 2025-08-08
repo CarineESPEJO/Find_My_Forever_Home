@@ -141,44 +141,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main>
         <h2>New Add</h2>
         <form action="" method="post" enctype="multipart/form-data">
-            <label>Title:</label>
-            <input type="text" name="title" minlength="5" maxlength="50" required value="<?= htmlspecialchars($title) ?>">
-            <span class="error"><?= $errors['title'] ?? "" ?></span>
+    <label>Title:</label>
+    <input type="text" id="title" name="title" minlength="5" maxlength="255" required value="<?= htmlspecialchars($title) ?>">
+    <span id="titleError" class="error"><?= $errors['title'] ?? "" ?></span>
 
-            <label>Upload image:</label>
-            <input type="file" name="image_file" accept=".jpg,.jpeg,.png,.webp" required>
-            <span class="error"><?= $errors['image_file'] ?? "" ?></span>
+    <label>Upload image:</label>
+    <input type="file" id="image_file" name="image_file" accept=".jpg,.jpeg,.png,.webp" required>
+    <span id="imgError" class="error"><?= $errors['image_file'] ?? "" ?></span>
 
-            <label>Price:</label>
-            <input type="number" name="price" min="1" required value="<?= htmlspecialchars($price) ?>">
-            <span class="error"><?= $errors['price'] ?? "" ?></span>
+    <label>Price:</label>
+    <input type="number" id="price" name="price" min="1" required value="<?= htmlspecialchars($price) ?>">
+    <span id="priceError" class="error"><?= $errors['price'] ?? "" ?></span>
 
-            <label>City:</label>
-            <input type="text" name="city" required value="<?= htmlspecialchars($city) ?>">
-            <span class="error"><?= $errors['city'] ?? "" ?></span>
+    <label>City:</label>
+    <input type="text" id="city" name="city" required value="<?= htmlspecialchars($city) ?>">
+    <span id="cityError" class="error"><?= $errors['city'] ?? "" ?></span>
 
-            <label>Description:</label>
-            <textarea name="description" minlength="50" maxlength="1000" required><?= htmlspecialchars($description) ?></textarea>
-            <span class="error"><?= $errors['description'] ?? "" ?></span>
+    <label>Description:</label>
+    <textarea id="description" name="description" minlength="50" maxlength="1000" required><?= htmlspecialchars($description) ?></textarea>
+    <span id="descError" class="error"><?= $errors['description'] ?? "" ?></span>
 
-            <label>Property type:</label>
-            <select name="property_type" required>
-                <option value="" hidden>--select type--</option>
-                <option value="House" <?= $property_type === 'House' ? 'selected' : '' ?>>House</option>
-                <option value="Apartment" <?= $property_type === 'Apartment' ? 'selected' : '' ?>>Apartment</option>
-            </select>
-            <span class="error"><?= $errors['property_type'] ?? "" ?></span>
+    <label>Property type:</label>
+    <select id="property_type" name="property_type" required>
+        <option value="" hidden>--select type--</option>
+        <option value="House" <?= $property_type === 'House' ? 'selected' : '' ?>>House</option>
+        <option value="Apartment" <?= $property_type === 'Apartment' ? 'selected' : '' ?>>Apartment</option>
+    </select>
+    <span id="proptypeError" class="error"><?= $errors['property_type'] ?? "" ?></span>
 
-            <label>Transaction type:</label>
-            <select name="transaction_type" required>
-                <option value="" hidden>--select type--</option>
-                <option value="Rent" <?= $transaction_type === 'Rent' ? 'selected' : '' ?>>Rent</option>
-                <option value="Sale" <?= $transaction_type === 'Sale' ? 'selected' : '' ?>>Sale</option>
-            </select>
-            <span class="error"><?= $errors['transaction_type'] ?? "" ?></span>
+    <label>Transaction type:</label>
+    <select id="transaction_type" name="transaction_type" required>
+        <option value="" hidden>--select type--</option>
+        <option value="Rent" <?= $transaction_type === 'Rent' ? 'selected' : '' ?>>Rent</option>
+        <option value="Sale" <?= $transaction_type === 'Sale' ? 'selected' : '' ?>>Sale</option>
+    </select>
+    <span id="transtypeError" class="error"><?= $errors['transaction_type'] ?? "" ?></span>
 
-            <button type="submit">Enregistrer</button>
-        </form>
+    <button type="submit">Enregistrer</button>
+</form>
     </main>
 </div>
 <?php require_once("../common_components/footer.php"); ?>

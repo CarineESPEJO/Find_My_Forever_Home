@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION["userId"] = $user["id"];
         $_SESSION["userRole"] = $user["role"];
         $_SESSION["isLoggedIn"] = true;
-        header("Location: ../../index.php");
+        header("Location: ../../../index.php");
         exit();
     } else {
         $error = "Identifiants incorrects";

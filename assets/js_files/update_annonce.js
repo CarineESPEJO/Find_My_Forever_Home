@@ -42,12 +42,9 @@ form.addEventListener('submit', function (event) {
         titleError.textContent = 'Le titre doit contenir entre 5 et 255 caractères';
     }
 
-    if (!file) {
-        isValid = false;
-        document.getElementById('imgError').textContent = "Vous devez sélectionner une image.";
-    } else {
-        const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/webp'];
-        const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+        const maxSize = 5 * 1024 * 1024;
 
         if (!allowedTypes.includes(file.type)) {
             isValid = false;
@@ -55,8 +52,8 @@ form.addEventListener('submit', function (event) {
         } else if (file.size > maxSize) {
             isValid = false;
             imgError.textContent = "L'image ne doit pas dépasser 5 Mo.";
-        };
-    };
+        }
+    }
 
     if (!isValidPrice(price.value)) {
         isValid = false;
