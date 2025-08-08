@@ -34,7 +34,7 @@ if (file_exists($commentsFile)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find my dream home - Commentaires</title>
     <link rel="stylesheet" href="/assets/css_files/global_style.css">
-    <link rel="stylesheet" href="/assets/css_files/connexion_style.css">
+    <link rel="stylesheet" href="/assets/css_files/index_style.css">
 </head>
 <body>
 

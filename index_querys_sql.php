@@ -27,5 +27,5 @@ if ($stmt_is_house) {
     );
 }
 
-$stmt->execute(); // 🔹 THIS IS MANDATORY
+$stmt->execute(); 
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
