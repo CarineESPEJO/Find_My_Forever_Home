@@ -7,8 +7,11 @@
             </a>
         </div>
         <ul>
-            <li><a href="https://m.media-amazon.com/images/I/813kqvYoRfL.png">House</a></li>
-            <li><a href="/views/pages/comments.php">Appartement</a></li>
+            <li><a href="/views/pages/houses.php">House</a></li>
+            <li><a href="/views/pages/apartements.php">Appartement</a></li>
+            <?php if (!empty($_SESSION["isLoggedIn"]) && $_SESSION["isLoggedIn"] == true): ?>
+                <li><a href="/views/pages/favorites.php">Favoris</a></li>
+            <?php endif; ?>
             <?php if(!empty($_SESSION["userRole"]) && ($_SESSION["userRole"] === "admin" || $_SESSION["userRole"] === "agent")) : ?>
                 <li class="login"><a href="/views/pages/add_annonce.php">Add</a></li>
             <?php endif; ?>

@@ -7,7 +7,6 @@ if (!isset($annonceId) || !isset($pdo)) {
 $userId = $_SESSION['userId'] ?? null;
 
 if (!$userId) {
-
     echo '<button class="favoris" disabled>Connexion requise</button>';
     return;
 }
@@ -20,8 +19,6 @@ $isFavorited = (bool) $stmt->fetchColumn();
 
 <button class="favoris <?= $isFavorited ? 'favorited' : '' ?>"
     data-annonce-id="<?= htmlspecialchars($annonceId) ?>"
-    type="button"
-    style="background-color: <?= $isFavorited ? '#d9534f' : '#bb9e1f' ?>; color: white; padding: 0.4rem 1rem;
-    border-radius: 0.25rem; font-weight: bold;">
+    type="button">
     <?= $isFavorited ? 'Supprimer des favoris' : 'Ajouter aux favoris' ?>
 </button>

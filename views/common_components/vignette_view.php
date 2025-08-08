@@ -31,7 +31,7 @@ $isFavorited = !empty($result);
     <!-- outside of the main link to be also clickable but elsewhere -->
     <?php
     $annonceId = $annonce['id'];
-    include __DIR__ . '/favorite_button.php';
+    include ('favorite_button.php');
     ?>
 
     <a class="contact contact-btn"
