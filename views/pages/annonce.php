@@ -46,8 +46,8 @@ if (!$annonce) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/assets/css_files/global_style.css">
-    <link rel="stylesheet" href="/assets/css_files/index_style.css">
-    <link rel="stylesheet" href="/assets/css_files/delete_modal.css">
+    <link rel="stylesheet" href="/assets/css_files/annonce_style.css">
+    <script src="/assets/js_files/favorite_button.js" defer></script>
     <script src="/assets/js_files/delete_modal.js" defer></script>
 </head>
 
@@ -60,8 +60,13 @@ if (!$annonce) {
         <p><?php echo $annonce['property_type'] ?></p>
         <p><?php echo $annonce['description'] ?></p>
 
+        <?php
+        $annonceId = $annonce['id'];
+        include __DIR__ . '/../common_components/favorite_button.php';
+        ?>
+
         <?php if (!empty($_SESSION["userRole"]) && ($_SESSION["userRole"] === "admin" || ($_SESSION["userRole"] === "agent" && $_SESSION["userId"] === $annonce['user_id']))): ?>
-           <a class="contact" href="update_annonce.php?id=<?= urlencode($annonce['id']) ?>">Modifier</a>
+            <a class="contact" href="update_annonce.php?id=<?= urlencode($annonce['id']) ?>">Modifier</a>
             <button class="contact" id="deleteBtn">Supprimer</button>
         <?php endif; ?>
 

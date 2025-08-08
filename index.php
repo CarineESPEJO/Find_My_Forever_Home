@@ -12,6 +12,7 @@ require_once("views/common_components/pdo_connexion.php");
     <title>Find my dream home</title>
     <link rel="stylesheet" href="/assets/css_files/global_style.css">
     <link rel="stylesheet" href="/assets/css_files/index_style.css">
+    <script src="/assets/js_files/favorite_button.js" defer></script>
 </head>
 
 <body>
