@@ -1,0 +1,60 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+body {
+  background-color: #ececec;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login,
+.contact {
+  background-color: #31a2ff;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  text-decoration: none;
+}
+
+.login {
+  padding: 0.5rem;
+}
+
+.contact {
+  display: flex;
+  justify-content: center;
+  width: 25%;
+  padding: 0.5rem 2rem;
+}
+
+main {
+  max-width: 62rem;
+  margin-bottom: 1.5rem;
+}
+
+.favoris {
+  background-color: #bb9e1f !important;
+  /* default */
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.favoris.favorited {
+  background-color: #e04e4e !important;
+  /* active */
+  color: white;
+}
