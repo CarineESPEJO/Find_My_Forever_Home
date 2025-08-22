@@ -49,11 +49,14 @@ DROP TABLE IF EXISTS favorite;
 CREATE TABLE favorite (
     user_id INT NOT NULL,
     listing_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT pk_favorite PRIMARY KEY (user_id, listing_id),
     CONSTRAINT fk_fav_user_id FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     CONSTRAINT fk_fav_listing_id FOREIGN KEY (listing_id) REFERENCES listing(id) ON DELETE CASCADE
 );
+
+
 
 
 INSERT INTO user (email, password, role, updated_at) VALUES
@@ -159,4 +162,4 @@ JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
 WHERE protyp.name = 'House'
 ORDER BY lis.id;
 
-SELECT  * FROM user;
+SELECT  * FROM listing;

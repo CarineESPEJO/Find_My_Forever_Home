@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_regenerate_id(true);
         $_SESSION["userId"] = $user["id"];
         $_SESSION["userRole"] = $user["role"];
+        $_SESSION["userEmail"] = $user["email"];
         $_SESSION["isLoggedIn"] = true;
         header("Location: ../../../index.php");
         exit();
@@ -35,10 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="email">Email:</label>
     <input type="email" name="email" id="email" required>
 
-    <label for="password">Password:</label>
+    <label for="password">Mot de passe:</label>
     <input type="password" name="password" id="password" required>
 
-    <button type="submit">Login</button>
+    <button type="submit">Connexion</button>
 </form>
 
 <a href="formsLayout.php?form=register">Pas encore inscrit ? Inscrivez-vous</a>

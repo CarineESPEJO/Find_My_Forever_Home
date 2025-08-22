@@ -15,11 +15,51 @@ $pdo = \App\Core\Database::getConnection();
 // Determine property type from URL
 $propertyType = isset($_GET['type']) ? ucfirst(strtolower($_GET['type'])) : 'House';
 
+// Determine page title based on type
+switch ($propertyType) {
+    case 'House':
+        $pageTitle = "Nos annonces de Maisons";
+        break;
+    case 'Apartment':
+        $pageTitle = "Nos annonces d'Appartements";
+        break;
+    case 'Search':
+        $pageTitle = "Rechercher une annonce";
+        break;
+    case 'Favorite':
+        $pageTitle = "Vos favoris";
+        break;
+    default:
+        $pageTitle = "Nos annonces";
+        break;
+}
+
 // Handle AJAX request & offset
 $ajaxRequest = $_GET['ajax'] ?? false;
 $offset = (int)($_GET['offset'] ?? $_SESSION['nb_offset'] ?? 0);
 
-// --- Handle pagination POST ---
+// Fetch user ID
+$userId = $_SESSION['userId'] ?? null;
+
+// Filters (only for Search and Favorites)
+$filters = [];
+if ($propertyType === 'Search' || $propertyType === 'Favorite') {
+    $filters['city'] = $_GET['city'] ?? '';
+    $filters['max_price'] = $_GET['max_price'] ?? '';
+    $filters['property_type'] = $_GET['property_type'] ?? '';
+    $filters['transaction_type'] = $_GET['transaction_type'] ?? '';
+}
+
+// Fetch total count
+if ($propertyType === 'Favorite' && $userId) {
+    $totalCount = $repo->countFavorites($userId, $filters);
+} elseif ($propertyType === 'Search') {
+    $totalCount = $repo->countSearch($filters);
+} else {
+    $totalCount = $repo->countByType($propertyType);
+}
+
+// Handle pagination POST
 if (!$ajaxRequest) {
     if (!isset($_SESSION['nb_offset'])) $_SESSION['nb_offset'] = 0;
     $currentPage = $_SERVER['SCRIPT_NAME'];
@@ -29,17 +69,25 @@ if (!$ajaxRequest) {
     $_SESSION['last_visited_page'] = $currentPage . $propertyType;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['increase'])) $_SESSION['nb_offset'] += 12;
-        if (isset($_POST['decrease'])) $_SESSION['nb_offset'] -= 12;
+        if (isset($_POST['increase'])) {
+            $_SESSION['nb_offset'] += 12;
+        }
+        if (isset($_POST['decrease'])) {
+            $_SESSION['nb_offset'] -= 12;
+        }
+        if (isset($_POST['go']) && isset($_POST['goto_page'])) {
+            $requestedPage = (int) $_POST['goto_page'];
+            $maxPage = ceil($totalCount / 12);
+            if ($requestedPage >= 1 && $requestedPage <= $maxPage) {
+                $_SESSION['nb_offset'] = ($requestedPage - 1) * 12;
+            }
+        }
         if ($_SESSION['nb_offset'] < 0) $_SESSION['nb_offset'] = 0;
     }
     $offset = $_SESSION['nb_offset'];
 }
 
-// --- Fetch user ID ---
-$userId = $_SESSION['userId'] ?? null;
-
-// --- Fetch user's favorites IDs for marking ---
+// Fetch user's favorites IDs for marking
 $favorites = [];
 if ($userId) {
     $stmt = $pdo->prepare('SELECT listing_id FROM favorite WHERE user_id = :user_id');
@@ -47,42 +95,18 @@ if ($userId) {
     $favorites = $stmt->fetchAll(PDO::FETCH_COLUMN);
 }
 
-// --- Fetch listings ---
+// Fetch listings
 if ($propertyType === 'Favorite' && $userId) {
-    $stmt = $pdo->prepare("
-        SELECT l.*, pt.name AS property_type, tt.name AS transaction_type
-        FROM favorite f
-        JOIN listing l ON f.listing_id = l.id
-        JOIN propertytype pt ON l.property_type_id = pt.id
-        JOIN transactiontype tt ON l.transaction_type_id = tt.id
-        WHERE f.user_id = :user_id
-        ORDER BY f.created_at DESC
-        LIMIT :limit OFFSET :offset
-    ");
-    $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
-    $stmt->bindValue(':limit', 12, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    $stmt->execute();
-    $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Handle AJAX request: return only vignette HTML
-    if ($ajaxRequest) {
-        foreach ($listings as $annonce) {
-            $isFavorited = in_array($annonce['id'], $favorites);
-            include __DIR__ . '/../app/Views/Components/VignetteView.php';
-        }
-        exit;
-    }
-
-    // Total count for pagination
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM favorite WHERE user_id = :user_id");
-    $stmt->execute([':user_id' => $userId]);
-    $totalCount = (int)$stmt->fetchColumn();
+    $listings = $repo->searchFavorites($userId, $filters, $offset);
+} elseif ($propertyType === 'Search') {
+    $listings = $repo->search($filters, $offset);
 } else {
-    // Fetch by type with pagination
     $listings = $repo->getByTypeWithOffset($propertyType, $offset);
-    $totalCount = $repo->countByType($propertyType);
 }
+
+// Fetch dropdown values
+$propertyTypes = $repo->getPropertyTypes();
+$transactionTypes = $repo->getTransactionTypes();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -94,6 +118,7 @@ if ($propertyType === 'Favorite' && $userId) {
     <link rel="stylesheet" href="/assets/css/header_footer.css">
     <link rel="stylesheet" href="/assets/css/catalog.css">
     <script src="/assets/js/favoriteButton.js" defer></script>
+    <script src="/assets/js/pagination.js" defer></script>
 </head>
 
 <body>
@@ -101,8 +126,42 @@ if ($propertyType === 'Favorite' && $userId) {
 
     <main>
         <section>
-            <h2>Nos annonces de <?= htmlspecialchars($propertyType) ?></h2>
+            <h2><?= htmlspecialchars($pageTitle) ?></h2>
             <hr>
+
+            <!-- Search form (only for Search & Favorites) -->
+            <?php if ($propertyType === 'Search' || $propertyType === 'Favorite'): ?>
+                <form method="GET" style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
+                    <input type="hidden" name="type" value="<?= htmlspecialchars($propertyType) ?>">
+
+                    <input type="text" name="city" placeholder="Ville"
+                        value="<?= htmlspecialchars($filters['city']) ?>">
+
+                    <input type="number" name="max_price" placeholder="Prix max"
+                        value="<?= htmlspecialchars($filters['max_price']) ?>">
+
+                    <select name="property_type">
+                        <option value="">Type de bien</option>
+                        <?php foreach ($propertyTypes as $pt): ?>
+                            <option value="<?= $pt['id'] ?>" <?= $filters['property_type'] == $pt['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($pt['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <select name="transaction_type">
+                        <option value="">Type de transaction</option>
+                        <?php foreach ($transactionTypes as $tt): ?>
+                            <option value="<?= $tt['id'] ?>" <?= $filters['transaction_type'] == $tt['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($tt['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <button type="submit">Rechercher</button>
+                </form>
+            <?php endif; ?>
+
             <div>
                 <?php foreach ($listings as $annonce): ?>
                     <?php
@@ -113,10 +172,23 @@ if ($propertyType === 'Favorite' && $userId) {
             </div>
         </section>
 
-        <?php if (!$ajaxRequest && $totalCount > 12): // Show pagination only if more than 12 
-        ?>
-            <form method="POST">
+        <?php if (!$ajaxRequest && $totalCount > 12): ?>
+            <form method="POST" style="margin-top:20px; display:flex; gap:10px; align-items:center;">
                 <button type="submit" name="decrease" <?= $offset == 0 ? 'disabled' : '' ?>>Page précédente</button>
+
+                <span>
+                    Page <?= floor($offset / 12) + 1 ?> / <?= ceil($totalCount / 12) ?>
+                </span>
+
+                <input
+                    type="number"
+                    name="goto_page"
+                    min="1"
+                    max="<?= ceil($totalCount / 12) ?>"
+                    value="<?= floor($offset / 12) + 1 ?>"
+                    style="width:60px; text-align:center;">
+                <button type="submit" name="go">Aller</button>
+
                 <button type="submit" name="increase" <?= ($offset + 12) >= $totalCount ? 'disabled' : '' ?>>Page suivante</button>
             </form>
         <?php endif; ?>

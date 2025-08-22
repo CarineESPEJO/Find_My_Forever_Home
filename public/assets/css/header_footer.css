@@ -6,19 +6,15 @@ footer {
   padding: 0.5rem;
   background-color: white;
   box-shadow: 0 0 0.3rem gray;
+  z-index: 3;
+  position: fixed;
 }
 
 footer {
-  position: fixed;
-  left: 0;
   bottom: 0;
-  z-index: 3;
 }
 
-
-header {
-  position: sticky;
-}
+header {}
 
 nav {
   display: flex;

@@ -31,8 +31,8 @@ if (($form === 'AddListing' || $form === 'UpdateListing') && empty($_SESSION['us
 
 // Map form to h2 titles
 $formTitles = [
-    'login' => 'Connexion',
-    'register' => 'Inscription',
+    'login' => 'Connexion à <br><b>Find My Dream Home</b>',
+    'register' => 'Créer un compte sur <br><b>Find My Dream Home</b>',
     'AddListing' => 'Créer une annonce',
     'UpdateListing' => 'Modifier une annonce'
 ];
@@ -68,25 +68,27 @@ $h2Title = $formTitles[$form] ?? '';
             <img src="/assets/images/login_img.jpeg" alt="Login visual" />
         </aside>
 
-        <main>
-            <h2><?= htmlspecialchars($h2Title) ?></h2>
-            <?php
-            switch ($form) {
-                case 'login':
-                    include __DIR__ . '/../app/Views/Forms/Log/LoginForm.php';
-                    break;
-                case 'register':
-                    include __DIR__ . '/../app/Views/Forms/Log/RegisterForm.php';
-                    break;
-                case 'AddListing':
-                    include __DIR__ . '/../app/Views/Forms/Listing/AddListing.php';
-                    break;
-                case 'UpdateListing':
-                    include __DIR__ . '/../app/Views/Forms/Listing/UpdateListing.php';
-                    break;
-            }
-            ?>
-        </main>
+        <div class="main-wrapper">
+            <main>
+                <h2><?= strip_tags($h2Title, '<br><b>') ?></h2>
+                <?php
+                switch ($form) {
+                    case 'login':
+                        include __DIR__ . '/../app/Views/Forms/Log/LoginForm.php';
+                        break;
+                    case 'register':
+                        include __DIR__ . '/../app/Views/Forms/Log/RegisterForm.php';
+                        break;
+                    case 'AddListing':
+                        include __DIR__ . '/../app/Views/Forms/Listing/AddListing.php';
+                        break;
+                    case 'UpdateListing':
+                        include __DIR__ . '/../app/Views/Forms/Listing/UpdateListing.php';
+                        break;
+                }
+                ?>
+            </main>
+        </div>
     </div>
 
     <?php require_once __DIR__ . '/../app/Views/Components/Footer.php'; ?>

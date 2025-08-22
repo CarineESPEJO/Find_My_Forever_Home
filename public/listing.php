@@ -37,6 +37,11 @@ if (!$annonce) {
     echo "Annonce introuvable.";
     exit();
 }
+
+$userId = $_SESSION['userId'] ?? null;
+$annonceId = $annonce['id'];
+$favorites = $_SESSION['favorites'] ?? [];
+$isFavorited = $userId ? in_array($annonceId, $favorites) : false;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,25 +60,36 @@ if (!$annonce) {
 <body>
     <?php require_once __DIR__ . '/../app/Views/Components/Header.php'; ?>
 
-    <main>
-        <img src="<?= htmlspecialchars($annonce['image_URL']) ?>" alt="Image de l'annonce">
-        <h1><?= htmlspecialchars($annonce['title']) ?></h1>
-        <p><?= htmlspecialchars($annonce['price']) ?><?= $annonce['transaction_type'] === 'Rent' ? '€/month' : '€' ?></p>
-        <p><?= htmlspecialchars($annonce['city']) ?>, FRANCE</p>
-        <p><?= htmlspecialchars($annonce['property_type']) ?></p>
-        <p><?= htmlspecialchars($annonce['description']) ?></p>
+    <main class="listing-container">
+        <!-- Image -->
+        <div class="listing-image">
+            <img src="<?= htmlspecialchars($annonce['image_URL']) ?>" alt="Image de l'annonce">
+        </div>
 
-        <?php
-        $annonceId = $annonce['id'];
-        $isFavorited = isset($_SESSION['favorites']) && in_array($annonceId, $_SESSION['favorites']);
-        include __DIR__ . '/../app/Views/Components/Buttons/FavoriteButton.php';
-        ?>
+        <!-- Info -->
+        <div class="listing-info">
+            <h1><?= htmlspecialchars($annonce['title']) ?></h1>
+            <p class="price"><?= htmlspecialchars($annonce['price']) ?><?= $annonce['transaction_type'] === 'Rent' ? ' €/mois' : ' €' ?></p>
+            <p class="location"><?= htmlspecialchars($annonce['city']) ?>, FRANCE</p>
+            <p class="type"><?= htmlspecialchars($annonce['property_type']) ?></p>
 
-        <?php if (!empty($_SESSION["userRole"]) && ($_SESSION["userRole"] === "admin" || ($_SESSION["userRole"] === "agent" && $_SESSION["userId"] === $annonce['user_id']))): ?>
-            <a class="contact" href="/formsLayout.php?form=UpdateListing&id=<?= (int)$annonce['id'] ?>">Modifier</a>
-            <button class="contact" id="deleteBtn">Supprimer</button>
-        <?php endif; ?>
+            <!-- Buttons -->
+            <div class="listing-actions">
+                <?php include __DIR__ . '/../app/Views/Components/Buttons/FavoriteButton.php'; ?>
+                <?php if (!empty($_SESSION["userRole"]) && ($_SESSION["userRole"] === "admin" || ($_SESSION["userRole"] === "agent" && $_SESSION["userId"] === $annonce['user_id']))): ?>
+                    <a class="contact" href="/formsLayout.php?form=UpdateListing&id=<?= (int)$annonce['id'] ?>">Modifier</a>
+                    <button class="contact" id="deleteBtn">Supprimer</button>
+                <?php endif; ?>
+            </div>
+        </div>
 
+        <!-- Description -->
+        <div class="listing-description">
+            <h2>Description</h2>
+            <p><?= nl2br(htmlspecialchars($annonce['description'])) ?></p>
+        </div>
+
+        <!-- Delete Modal -->
         <div id="deleteModal" class="modal">
             <div class="modal-content">
                 <p>Voulez-vous vraiment supprimer cette annonce ?</p>
@@ -84,6 +100,8 @@ if (!$annonce) {
             </div>
         </div>
     </main>
+
     <?php require_once __DIR__ . '/../app/Views/Components/Footer.php'; ?>
+</body>
 
 </html>

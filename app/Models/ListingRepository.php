@@ -14,37 +14,7 @@ class ListingRepository
         $this->db = Database::getConnection();
     }
 
-    // Fetch all listings
-    public function getAll(): array
-    {
-        $stmt = $this->db->query("
-            SELECT lis.id AS id, image_URL, title, price, protyp.name AS property_type,
-                   tratyp.name AS transaction_type, city, description, lis.created_at, lis.updated_at
-            FROM listing AS lis
-            JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
-            JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
-            ORDER BY lis.id DESC
-        ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // Fetch listings by type
-    public function getByType(string $type): array
-    {
-        $stmt = $this->db->prepare("
-            SELECT lis.id AS id, image_URL, title, price, protyp.name AS property_type,
-                   tratyp.name AS transaction_type, city, description, lis.created_at, lis.updated_at
-            FROM listing AS lis
-            JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
-            JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
-            WHERE protyp.name = :type
-            ORDER BY lis.id DESC
-        ");
-        $stmt->execute(['type' => $type]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // Fetch listings by type with pagination
+    // --- Type-specific listings (House / Apartment) ---
     public function getByTypeWithOffset(string $type, int $offset = 0, int $limit = 12): array
     {
         $stmt = $this->db->prepare("
@@ -64,7 +34,6 @@ class ListingRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Count total listings by type
     public function countByType(string $type): int
     {
         $stmt = $this->db->prepare("
@@ -73,51 +42,187 @@ class ListingRepository
             JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
             WHERE protyp.name = :type
         ");
-        $stmt->execute(['type' => $type]);
+        $stmt->execute([':type' => $type]);
         return (int)$stmt->fetchColumn();
     }
 
-    // Fetch listing by ID
-    public function getById(int $id): ?array
+    // --- All listings with optional filters (Search page) ---
+    public function search(array $filters = [], int $offset = 0, int $limit = 12): array
     {
-        $stmt = $this->db->prepare("
+        $sql = "
             SELECT lis.id AS id, image_URL, title, price, protyp.name AS property_type,
                    tratyp.name AS transaction_type, city, description, lis.created_at, lis.updated_at
             FROM listing AS lis
             JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
             JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
-            WHERE lis.id = :id
-        ");
-        $stmt->execute(['id' => $id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ?: null;
-    }
+            WHERE 1=1
+        ";
 
-    // Fetch favorites of a user with pagination
-    public function getFavoritesByUser(int $userId, int $offset = 0, int $limit = 12): array
-    {
-        $stmt = $this->db->prepare("
-        SELECT lis.*, protyp.name AS property_type, tratyp.name AS transaction_type
-        FROM listing AS lis
-        JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
-        JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
-        JOIN favorite AS fav ON lis.id = fav.listing_id
-        WHERE fav.user_id = :user_id
-        ORDER BY fav.created_at DESC
-        LIMIT :limit OFFSET :offset
-    ");
-        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $params = [];
+
+        if (!empty($filters['city'])) {
+            $sql .= " AND city LIKE :city";
+            $params[':city'] = '%' . $filters['city'] . '%';
+        }
+
+        if (!empty($filters['max_price'])) {
+            $sql .= " AND price <= :max_price";
+            $params[':max_price'] = (int)$filters['max_price'];
+        }
+
+        if (!empty($filters['property_type'])) {
+            $sql .= " AND protyp.id = :property_type";
+            $params[':property_type'] = (int)$filters['property_type'];
+        }
+
+        if (!empty($filters['transaction_type'])) {
+            $sql .= " AND tratyp.id = :transaction_type";
+            $params[':transaction_type'] = (int)$filters['transaction_type'];
+        }
+
+        $sql .= " ORDER BY lis.id DESC LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Count total favorites for a user
-    public function countFavoritesByUser(int $userId): int
+    public function countSearch(array $filters = []): int
     {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM favorite WHERE user_id = :user_id");
-        $stmt->execute(['user_id' => $userId]);
+        $sql = "
+            SELECT COUNT(*)
+            FROM listing AS lis
+            JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
+            JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
+            WHERE 1=1
+        ";
+
+        $params = [];
+
+        if (!empty($filters['city'])) {
+            $sql .= " AND city LIKE :city";
+            $params[':city'] = '%' . $filters['city'] . '%';
+        }
+
+        if (!empty($filters['max_price'])) {
+            $sql .= " AND price <= :max_price";
+            $params[':max_price'] = (int)$filters['max_price'];
+        }
+
+        if (!empty($filters['property_type'])) {
+            $sql .= " AND protyp.id = :property_type";
+            $params[':property_type'] = (int)$filters['property_type'];
+        }
+
+        if (!empty($filters['transaction_type'])) {
+            $sql .= " AND tratyp.id = :transaction_type";
+            $params[':transaction_type'] = (int)$filters['transaction_type'];
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         return (int)$stmt->fetchColumn();
+    }
+
+    // --- User's favorites with optional filters ---
+    public function searchFavorites(int $userId, array $filters = [], int $offset = 0, int $limit = 12): array
+    {
+        $sql = "
+            SELECT lis.*, protyp.name AS property_type, tratyp.name AS transaction_type
+            FROM favorite AS f
+            JOIN listing AS lis ON f.listing_id = lis.id
+            JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
+            JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
+            WHERE f.user_id = :user_id
+        ";
+
+        $params = [':user_id' => $userId];
+
+        if (!empty($filters['city'])) {
+            $sql .= " AND lis.city LIKE :city";
+            $params[':city'] = '%' . $filters['city'] . '%';
+        }
+
+        if (!empty($filters['max_price'])) {
+            $sql .= " AND lis.price <= :max_price";
+            $params[':max_price'] = (int)$filters['max_price'];
+        }
+
+        if (!empty($filters['property_type'])) {
+            $sql .= " AND protyp.id = :property_type";
+            $params[':property_type'] = (int)$filters['property_type'];
+        }
+
+        if (!empty($filters['transaction_type'])) {
+            $sql .= " AND tratyp.id = :transaction_type";
+            $params[':transaction_type'] = (int)$filters['transaction_type'];
+        }
+
+        $sql .= " ORDER BY f.created_at DESC LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countFavorites(int $userId, array $filters = []): int
+    {
+        $sql = "
+            SELECT COUNT(*)
+            FROM favorite AS f
+            JOIN listing AS lis ON f.listing_id = lis.id
+            JOIN propertytype AS protyp ON lis.property_type_id = protyp.id
+            JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
+            WHERE f.user_id = :user_id
+        ";
+
+        $params = [':user_id' => $userId];
+
+        if (!empty($filters['city'])) {
+            $sql .= " AND lis.city LIKE :city";
+            $params[':city'] = '%' . $filters['city'] . '%';
+        }
+
+        if (!empty($filters['max_price'])) {
+            $sql .= " AND lis.price <= :max_price";
+            $params[':max_price'] = (int)$filters['max_price'];
+        }
+
+        if (!empty($filters['property_type'])) {
+            $sql .= " AND protyp.id = :property_type";
+            $params[':property_type'] = (int)$filters['property_type'];
+        }
+
+        if (!empty($filters['transaction_type'])) {
+            $sql .= " AND tratyp.id = :transaction_type";
+            $params[':transaction_type'] = (int)$filters['transaction_type'];
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
+
+    // --- Dropdown lists ---
+    public function getPropertyTypes(): array
+    {
+        $stmt = $this->db->query("SELECT id, name FROM propertytype ORDER BY name ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTransactionTypes(): array
+    {
+        $stmt = $this->db->query("SELECT id, name FROM transactiontype ORDER BY name ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
