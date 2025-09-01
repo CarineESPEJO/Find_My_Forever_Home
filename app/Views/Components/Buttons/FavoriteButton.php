@@ -9,6 +9,6 @@ if (!$userId) {
 
 <button
     class="favoris <?= $isFavorited ? 'favorited' : '' ?>"
-    data-annonce-id="<?= $annonceId ?>">
+    data-annonce-id="<?= $listingId ?>">
     <?= $isFavorited ? 'Supprimer des favoris' : 'Ajouter aux favoris' ?>
 </button>

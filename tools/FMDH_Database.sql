@@ -162,4 +162,4 @@ JOIN transactiontype AS tratyp ON lis.transaction_type_id = tratyp.id
 WHERE protyp.name = 'House'
 ORDER BY lis.id;
 
-SELECT  * FROM listing;
+SELECT  * FROM user;

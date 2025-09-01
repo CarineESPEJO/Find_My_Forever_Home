@@ -163,10 +163,10 @@ $transactionTypes = $repo->getTransactionTypes();
             <?php endif; ?>
 
             <div>
-                <?php foreach ($listings as $annonce): ?>
+                <?php foreach ($listings as $listing): ?>
                     <?php
-                    $isFavorited = in_array($annonce['id'], $favorites);
-                    include __DIR__ . '/../app/Views/Components/VignetteView.php';
+                    $isFavorited = in_array($listing['id'], $favorites);
+                    include __DIR__ . '/../app/Views/Components/CardView.php';
                     ?>
                 <?php endforeach; ?>
             </div>

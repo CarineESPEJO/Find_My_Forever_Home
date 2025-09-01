@@ -55,19 +55,19 @@ article>a>h3 {
   text-overflow: ellipsis;
 }
 
-.vignette {
+.card {
   position: relative;
   overflow: hidden;
 }
 
-.vignette-link {
+.card-link {
   display: block;
   color: inherit;
   text-decoration: none;
   height: 100%;
 }
 
-.vignette-link>div {
+.card-link>div {
   height: 100%;
 }
 

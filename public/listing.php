@@ -30,18 +30,18 @@ $stmt = $pdo->prepare(
 $stmt->bindValue(":id", $id, PDO::PARAM_INT);
 $stmt->execute();
 
-$annonce = $stmt->fetch(PDO::FETCH_ASSOC);
+$listing = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$annonce) {
+if (!$listing) {
     header("HTTP/1.0 404 Not Found");
     echo "Annonce introuvable.";
     exit();
 }
 
 $userId = $_SESSION['userId'] ?? null;
-$annonceId = $annonce['id'];
+$listingId = $listing['id'];
 $favorites = $_SESSION['favorites'] ?? [];
-$isFavorited = $userId ? in_array($annonceId, $favorites) : false;
+$isFavorited = $userId ? in_array($listingId, $favorites) : false;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,7 +49,7 @@ $isFavorited = $userId ? in_array($annonceId, $favorites) : false;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($annonce['title']) ?></title>
+    <title><?= htmlspecialchars($listing['title']) ?></title>
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/header_footer.css">
     <link rel="stylesheet" href="/assets/css/listing.css">
@@ -63,21 +63,21 @@ $isFavorited = $userId ? in_array($annonceId, $favorites) : false;
     <main class="listing-container">
         <!-- Image -->
         <div class="listing-image">
-            <img src="<?= htmlspecialchars($annonce['image_URL']) ?>" alt="Image de l'annonce">
+            <img src="<?= htmlspecialchars($listing['image_URL']) ?>" alt="Image de l'annonce">
         </div>
 
         <!-- Info -->
         <div class="listing-info">
-            <h1><?= htmlspecialchars($annonce['title']) ?></h1>
-            <p class="price"><?= htmlspecialchars($annonce['price']) ?><?= $annonce['transaction_type'] === 'Rent' ? ' €/mois' : ' €' ?></p>
-            <p class="location"><?= htmlspecialchars($annonce['city']) ?>, FRANCE</p>
-            <p class="type"><?= htmlspecialchars($annonce['property_type']) ?></p>
+            <h1><?= htmlspecialchars($listing['title']) ?></h1>
+            <p class="price"><?= htmlspecialchars($listing['price']) ?><?= $listing['transaction_type'] === 'Rent' ? ' €/mois' : ' €' ?></p>
+            <p class="location"><?= htmlspecialchars($listing['city']) ?>, FRANCE</p>
+            <p class="type"><?= htmlspecialchars($listing['property_type']) ?></p>
 
             <!-- Buttons -->
             <div class="listing-actions">
                 <?php include __DIR__ . '/../app/Views/Components/Buttons/FavoriteButton.php'; ?>
-                <?php if (!empty($_SESSION["userRole"]) && ($_SESSION["userRole"] === "admin" || ($_SESSION["userRole"] === "agent" && $_SESSION["userId"] === $annonce['user_id']))): ?>
-                    <a class="contact" href="/formsLayout.php?form=UpdateListing&id=<?= (int)$annonce['id'] ?>">Modifier</a>
+                <?php if (!empty($_SESSION["userRole"]) && ($_SESSION["userRole"] === "admin" || ($_SESSION["userRole"] === "agent" && $_SESSION["userId"] === $listing['user_id']))): ?>
+                    <a class="contact" href="/formsLayout.php?form=UpdateListing&id=<?= (int)$listing['id'] ?>">Modifier</a>
                     <button class="contact" id="deleteBtn">Supprimer</button>
                 <?php endif; ?>
             </div>
@@ -86,7 +86,7 @@ $isFavorited = $userId ? in_array($annonceId, $favorites) : false;
         <!-- Description -->
         <div class="listing-description">
             <h2>Description</h2>
-            <p><?= nl2br(htmlspecialchars($annonce['description'])) ?></p>
+            <p><?= nl2br(htmlspecialchars($listing['description'])) ?></p>
         </div>
 
         <!-- Delete Modal -->
@@ -94,7 +94,7 @@ $isFavorited = $userId ? in_array($annonceId, $favorites) : false;
             <div class="modal-content">
                 <p>Voulez-vous vraiment supprimer cette annonce ?</p>
                 <div class="modal-actions">
-                    <a href="/DeleteListing.php?id=<?= urlencode($annonce['id']) ?>" class="btn-confirm">Oui</a>
+                    <a href="/DeleteListing.php?id=<?= urlencode($listing['id']) ?>" class="btn-confirm">Oui</a>
                     <button id="cancelBtn" class="btn-cancel">Non</button>
                 </div>
             </div>

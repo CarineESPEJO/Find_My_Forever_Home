@@ -63,21 +63,18 @@ article>a>h3 {
   text-overflow: ellipsis;
 }
 
-.vignette {
+.card {
   position: relative;
   overflow: hidden;
 }
 
-.vignette-link {
+.card-link {
   display: block;
   color: inherit;
   text-decoration: none;
   height: 100%;
 }
 
-.vignette-link>div {
-  height: 100%;
-}
 
 .contact-btn {
   position: absolute;

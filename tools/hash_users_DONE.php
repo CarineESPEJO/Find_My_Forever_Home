@@ -1,5 +1,8 @@
 <?php
-require_once("views/common_components/pdo_connexion.php"); // adapte si besoin
+// Load the Database file to connect to the database FMDH
+require_once __DIR__ . '/../app/Core/Database.php';
+// Call the class Database and save in pdo
+$pdo = \App\Core\Database::getConnection();
 
 $stmt = $pdo->query("SELECT id, password FROM user");
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);

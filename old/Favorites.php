@@ -42,8 +42,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div>
                 <?php
                 $stmt_is_house = true;
-                foreach ($result as $annonce) {
-                    include("../common_components/vignette_view.php");
+                foreach ($result as $listing) {
+                    include("../common_components/Cardview.php");
                 }
                 ?>
             </div>

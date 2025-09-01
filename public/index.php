@@ -1,26 +1,31 @@
 <?php
+//start the session or resume the on already running that the php pages transferred common elements (sessions var)
 session_start();
+//so that the header parts and some other components works even when we aren't logged in and so userId doesn't exist
 if (!isset($_SESSION["userId"])) {
     $_SESSION["userId"] = null;
 }
 
-// Load the Database class
+// Load the Database file to connect to the database FMDH
 require_once __DIR__ . '/../app/Core/Database.php';
-
-// Use fully qualified namespace
+// Call the class Database and save in pdo
 $pdo = \App\Core\Database::getConnection();
 
-// -------------------- Step 1: Fetch favorites --------------------
+// Fetch Favorites
+//if user connected (userId not null), ask (query) for  the favorites of the user
+//to use ON the listings to adapt the favorite button
+//its needed here because we call the CardView and it needs to know if the listing is inthe favorites or not
+
+// We could have put immediately $_SESSION['userId'] in the if condition and in execute
+// but its cleaner to put it in a var in case we need it somewhere else in the file
 $userId = $_SESSION['userId'];
 $favorites = [];
-
 if ($userId) {
     $stmt = $pdo->prepare("SELECT listing_id FROM favorite WHERE user_id = :user_id");
     $stmt->execute([':user_id' => $userId]);
     $favorites = $stmt->fetchAll(PDO::FETCH_COLUMN); // array of listing IDs
 }
 ?>
-
 
 
 <!DOCTYPE html>
@@ -46,9 +51,11 @@ if ($userId) {
             <div>
                 <?php
                 $stmt_is_house = true;
+                // call the query of the last 3 rows of the listings which are homes
                 require __DIR__ . '/../app/Queries/home_listings_queries.php';;
-                foreach ($result as $annonce) {
-                    include __DIR__ . '/../app/Views/Components/VignetteView.php';
+                // for each, create a card with a link to the listing page corresponding
+                foreach ($result as $listing) {
+                    include __DIR__ . '/../app/Views/Components/CardView.php';
                 }
                 ?>
             </div>
@@ -60,9 +67,10 @@ if ($userId) {
             <div>
                 <?php
                 $stmt_is_house = false;
+                // call the query of the last 3 rows of the listings which are apartments
                 require __DIR__ . '/../app/Queries/home_listings_queries.php';;
-                foreach ($result as $annonce) {
-                    include __DIR__ . '/../app/Views/Components/VignetteView.php';
+                foreach ($result as $listing) {
+                    include __DIR__ . '/../app/Views/Components/CardView.php';
                 }
                 ?>
             </div>
@@ -72,4 +80,4 @@ if ($userId) {
     <?php require_once __DIR__ . '/../app/Views/Components/Footer.php'; ?>
 </body>
 
-</html>
+</html> 
